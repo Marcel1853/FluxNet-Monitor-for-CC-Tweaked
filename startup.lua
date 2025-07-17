@@ -2,9 +2,8 @@ local log = require("log")
 local ui = require("network_ui")
 local themes = require("themes")
 
--- Theme-Auswahl: "default", "blue"
+-- Theme selection: "default", "blue"
 local theme = themes.default
-
 -- local theme = themes.blue
 
 local function safeWrap(name)
@@ -49,12 +48,12 @@ local function shortNumber(n)
 end
 
 local function main()
-    log.info("Programm gestartet")
+    log.info("Program started")
 
     local monitors = findMonitors()
     if #monitors == 0 then
-        print("Kein Monitor gefunden!")
-        log.error("Kein Monitor gefunden!")
+        print("No monitor found!")
+        log.error("No monitor found!")
         return
     end
 
@@ -63,19 +62,19 @@ local function main()
         for _, monitor in ipairs(monitors) do
             monitor.setCursorPos(2, 2)
             monitor.setTextColor(theme.error)
-            monitor.write("Keine Flux-Controller gefunden.")
+            monitor.write("No Flux Controller found.")
         end
         sleep(3)
         return
     end
 
-    -- Initialisierung für alle Monitore
+    -- Initialization for all monitors
     for _, monitor in ipairs(monitors) do
         monitor.setBackgroundColor(theme.background)
         monitor.setTextColor(theme.text)
         monitor.clear()
         monitor.setCursorPos(1, 1)
-        monitor.write("Lade Flux-Netzwerke...")
+        monitor.write("Loading Flux Networks...")
     end
     sleep(1)
 
@@ -100,7 +99,7 @@ local function main()
     local function drawTabs(win, mW, mH, thisTab)
         local tabWidth = math.floor(mW / #controllers)
         for i = 1, #controllers do
-            local label = " Netzwerk " .. i .. " "
+            local label = " Network " .. i .. " "
             local x = (i - 1) * tabWidth + 1
             win.setBackgroundColor(i == thisTab and theme.tab_active_bg or theme.tab_bg)
             win.setTextColor(i == thisTab and theme.tab_active_text or theme.tab_text)
@@ -114,17 +113,17 @@ local function main()
             local mW, mH = win.getSize()
             local thisTab = tab[monitorIdx]
 
-            -- Nur löschen, wenn Tab auf diesem Monitor gewechselt wurde
+            -- Only clear if tab changed on this monitor
             if thisTab ~= lastTab[monitorIdx] then
                 win.setBackgroundColor(theme.background)
                 win.clear()
                 lastTab[monitorIdx] = thisTab
             end
 
-            -- Tabs immer zeichnen!
+            -- Always draw tabs!
             drawTabs(win, mW, mH, thisTab)
 
-            -- Dynamische Werte je nach Monitorgröße
+            -- Dynamic values depending on monitor size
             local boxCols = mW >= 30 and 3 or (mW >= 20 and 2 or 1)
             local boxW = math.floor((mW - 2 * boxCols) / boxCols)
             local boxH = mH >= 16 and 4 or 3
@@ -152,14 +151,14 @@ local function main()
             if #inputHistory[thisTab] > maxChartPoints then table.remove(inputHistory[thisTab], 1) end
             if #outputHistory[thisTab] > maxChartPoints then table.remove(outputHistory[thisTab], 1) end
 
-            -- Im drawContent(), vor dem Labels-Array:
+            -- Before labels array:
             local function shortLabel(label, value, boxWidth)
                 local txt = label .. ": " .. value
                 if boxWidth < 10 then
-                    -- Nur Wert anzeigen, Label weglassen
+                    -- Only show value, omit label
                     txt = value
                 elseif #txt > boxWidth then
-                    -- Label abkürzen, z. B. "E:" statt "Energy:"
+                    -- Abbreviate label, e.g. "E:" instead of "Energy:"
                     local shortL = label:sub(1, 1) .. ":"
                     txt = shortL .. " " .. value
                     if #txt > boxWidth then
@@ -169,7 +168,7 @@ local function main()
                 return txt
             end
 
-            -- Labels wie gehabt, aber mit shortLabel:
+            -- Labels with shortLabel:
             local totalConnections = stats.connectionCount or 0
             local points = stats.pointCount or 0
             local controller = stats.controllerCount or 0
@@ -187,7 +186,7 @@ local function main()
                 { "Output",           shortNumber(stats.energyOutput or 0) .. " FE/t",                theme.output or colors.red },
             }
 
-            -- Boxen dynamisch anordnen
+            -- Dynamic box arrangement
             for i, v in ipairs(labels) do
                 local col = (i - 1) % boxCols
                 local row = math.floor((i - 1) / boxCols)
@@ -198,21 +197,21 @@ local function main()
                 local isSpecial = (fg == (theme.input or colors.lime) or fg == (theme.output or colors.red))
                 local bg = isSpecial and colors.black or theme.tab_bg
 
-                -- Text dynamisch kürzen
+                -- Dynamically shorten text
                 local boxText = shortLabel(v[1], v[2], boxW)
 
                 ui.drawBox(win, x, y, boxW, boxH, bg, fg, boxText)
             end
 
-            -- Energie-Balken
+            -- Energy bar
             local barY = startY + math.ceil(#labels / boxCols) * (boxH + padY)
             ui.drawBarWithPercent(win, 2, barY, mW - 4, 1, percent)
 
-            -- Diagramm
+            -- Chart
             local chartY = barY + 2
             ui.drawBarChart(win, 2, chartY, mW - 4, chartHeight, inputHistory[thisTab], outputHistory[thisTab])
 
-            -- Buttons ggf. kürzen
+            -- Buttons, shorten if needed
             win.setCursorPos(2, mH - 1)
             win.setBackgroundColor(theme.reset_bg)
             win.setTextColor(theme.text)
@@ -258,7 +257,7 @@ local function main()
         function()
             while true do
                 local event, side, x, y = os.pullEvent("monitor_touch")
-                -- Finde den Monitor, der berührt wurde
+                -- Find the monitor that was touched
                 local monitorIdx = 1
                 for i, mon in ipairs(monitors) do
                     if side == peripheral.getName(mon) then
@@ -275,6 +274,6 @@ end
 
 local ok, err = pcall(main)
 if not ok then
-    log.error("Kritischer Fehler", { error = err })
-    print("Ein kritischer Fehler ist aufgetreten - siehe log.json")
+    log.error("Critical error", { error = err })
+    print("A critical error occurred - see log.json")
 end

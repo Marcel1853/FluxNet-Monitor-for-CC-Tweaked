@@ -11,8 +11,8 @@ for _, file in ipairs(files) do
 end
 
 -- Alle Dateien wurden erfolgreich heruntergeladen
-print("Alle Dateien wurden geladen!")
-print("FluxNet Monitor wurde erfolgreich installiert!")
-print("Reboot in 5 Sekunden...")
+print("All files have been downloaded!")
+print("FluxNet Monitor was successfully installed!")
+print("Reboot in 5 seconds...")
 sleep(5) -- Kurze Pause für die Anzeige der Nachricht
 shell.run("reboot") -- Optional: Neustart des Systems nach der Installation
