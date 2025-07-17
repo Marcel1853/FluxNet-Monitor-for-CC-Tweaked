@@ -25,9 +25,21 @@ With this size (or larger), the display looks best and all functions are clearly
 
 ## Installation
 
+**Option 1: Manual Copy**
+
 1. Copy all `.lua` files (`startup.lua`, `log.lua`, `network_ui.lua`, `themes.lua`) into your computer folder (`computercraft/computer/<ID>/`).
 2. Set the theme in `startup.lua` (e.g. `local theme = themes.default` or `themes.blue`).
 3. Start the computer – the program will run automatically.
+
+**Option 2: Automatic Installation with One Command**
+
+Run the following command in your CC: Tweaked terminal to automatically download all files:
+
+```
+wget run https://raw.githubusercontent.com/Marcel1853/FluxNet-Monitor-for-CC-Tweaked/main/install.lua
+```
+
+The installation script will download all required files and start the program.
 
 ## Usage
 
