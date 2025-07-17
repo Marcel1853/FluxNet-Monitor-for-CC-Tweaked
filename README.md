@@ -73,4 +73,5 @@ Additional example with the blue theme enabled:
 
 **Required Mods:**
 - [CC: Tweaked (Modrinth)](https://modrinth.com/mod/cc-tweaked)
+- [Fluy Networks (CurseForge)](https://www.curseforge.com/minecraft/mc-mods/flux-networks)
 - [Flux Networks x CC: Tweaked (CurseForge)](https://www.curseforge.com/minecraft/mc-mods/flux-network-x-cc-tweaked)
