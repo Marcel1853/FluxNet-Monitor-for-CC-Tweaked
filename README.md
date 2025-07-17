@@ -66,6 +66,9 @@ Create an issue or contact me directly!
 ![FluxNet wiring and controllers](img/connecte_conkollers.png)
 ![Side view: monitor and cable](img/connected_monitors.png)
 
+Additional example with the blue theme enabled:
+![Display with blue theme](img/blue_theme_example.png)
+
 ---
 
 **Required Mods:**

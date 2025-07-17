@@ -66,6 +66,10 @@ Erstelle ein Issue oder kontaktiere mich direkt!
 ![FluxNet Verkabelung und Controller](img/connecte_conkollers.png)
 ![Seitenansicht Monitor und Kabel](img/connected_monitors.png)
 
+Weitere Beispielanzeige mit aktiviertem blauen Theme:
+![Anzeige mit blauem Theme](img/blue_thema.png.png)
+
+
 ---
 
 **Mods benötigt:**
