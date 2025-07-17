@@ -49,10 +49,10 @@ Create an issue or contact me directly!
 
 ## Screenshots
 
-![FluxNet wiring and controllers](img/connecte_conkollers.png)
-![Side view: monitor and cable](img/connected_monitors.png)
 ![Monitor display with tab and chart](img/monitor.png)
 ![Multiple monitors and networks](img/monitore.png)
+![FluxNet wiring and controllers](img/connecte_conkollers.png)
+![Side view: monitor and cable](img/connected_monitors.png)
 
 ---
 

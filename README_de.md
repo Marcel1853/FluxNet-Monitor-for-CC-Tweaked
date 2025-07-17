@@ -49,10 +49,10 @@ Erstelle ein Issue oder kontaktiere mich direkt!
 
 ## Screenshots
 
-![FluxNet Verkabelung und Controller](img/connecte_conkollers.png)
-![Seitenansicht Monitor und Kabel](img/connected_monitors.png)
 ![Monitoranzeige mit Tab und Diagramm](img/monitor.png)
 ![Mehrere Monitore und Netzwerke](img/monitore.png)
+![FluxNet Verkabelung und Controller](img/connecte_conkollers.png)
+![Seitenansicht Monitor und Kabel](img/connected_monitors.png)
 
 ---
 
