@@ -47,6 +47,13 @@ Mit dieser Größe (oder größer) sieht die Anzeige am besten aus und alle Funk
 Fragen, Fehler oder Wünsche?  
 Erstelle ein Issue oder kontaktiere mich direkt!
 
+## Screenshots
+
+![FluxNet Verkabelung und Controller](img/connecte_conkollers.png)
+![Seitenansicht Monitor und Kabel](img/connected_monitors.png)
+![Monitoranzeige mit Tab und Diagramm](img/monitor.png)
+![Mehrere Monitore und Netzwerke](img/monitore.png)
+
 ---
 
 **Mods benötigt:**
