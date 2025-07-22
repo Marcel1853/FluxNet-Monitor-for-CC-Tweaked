@@ -67,7 +67,7 @@ Create an issue or contact me directly!
 ![Side view: monitor and cable](img/connected_monitors.png)
 
 Additional example with the blue theme enabled:
-![Display with blue theme](img/blue_theme_example.png)
+![Display with blue theme](img/blue_thema.png)
 
 ---
 
