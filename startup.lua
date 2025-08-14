@@ -15,7 +15,8 @@ end
 local function findControllers()
     local ctrls = {}
     for _, name in ipairs(peripheral.getNames()) do
-        if peripheral.getType(name) == "fluxnetworks:flux_controller" then
+        local t = peripheral.getType(name)
+        if t == "fluxnetworks:flux_controller" then
             local dev = safeWrap(name)
             if dev then table.insert(ctrls, dev) end
         end
@@ -67,6 +68,7 @@ local function main()
         return
     end
 
+    -- Initialization for all monitors
     for _, monitor in ipairs(monitors) do
         monitor.setBackgroundColor(theme.background)
         monitor.setTextColor(theme.text)
@@ -94,7 +96,6 @@ local function main()
         outputHistory[tab] = {}
     end
 
-    -- Cache für NetworkStats
     local statsCache = {}
     local function updateStatsCache()
         while true do
@@ -127,7 +128,7 @@ local function main()
             win.setBackgroundColor(i == thisTab and theme.tab_active_bg or theme.tab_bg)
             win.setTextColor(i == thisTab and theme.tab_active_text or theme.tab_text)
             win.setCursorPos(x, 1)
-            win.write(label .. string.rep(" ", math.max(0, tabWidth - #label)))
+            win.write(label .. string.rep(" ", tabWidth - #label))
         end
     end
 
@@ -136,14 +137,13 @@ local function main()
             local mW, mH = win.getSize()
             local thisTab = tab[monitorIdx]
 
-            -- Nur clear, wenn Tab gewechselt hat
+            -- Only clear if tab changed on this monitor
             if thisTab ~= lastTab[monitorIdx] then
                 win.setBackgroundColor(theme.background)
                 win.clear()
                 lastTab[monitorIdx] = thisTab
             end
 
-            -- Hole Cache für diesen Tab
             local cache = statsCache[thisTab]
             if not cache then
                 drawTabs(win, mW, mH, thisTab)
@@ -151,23 +151,28 @@ local function main()
                 win.write("Loading...")
             end
 
-            local stats = cache.stats or {}
-            local networkName = cache.networkName or "?"
-
-            -- Tabs zeichnen
+            -- Always draw tabs!
             drawTabs(win, mW, mH, thisTab)
 
-            -- ===== Ab hier wie dein bisheriger Anzeige-Code =====
+            -- Dynamic values depending on monitor size
             local boxCols = mW >= 30 and 3 or (mW >= 20 and 2 or 1)
             local boxW = math.floor((mW - 2 * boxCols) / boxCols)
             local boxH = mH >= 16 and 4 or 3
-            local padX, padY, startY = 2, 1, 3
+            local padX = 2
+            local padY = 1
+            local startY = 3
 
             chartHeight = math.max(3, math.min(8, mH - (startY + boxH * math.ceil(8 / boxCols) + 5)))
             maxChartPoints = math.max(10, mW - 4)
 
-            local energy = stats.energy or 0
-            local capacity = stats.energyCapacity or 1
+            local ctrl = controllers[thisTab]
+            if not ctrl then return end
+
+            local success, stats = pcall(ctrl.networkStats)
+            if not success or not stats then return end
+
+            local energy = ctrl.getEnergy() or 0
+            local capacity = ctrl.getEnergyCapacity() or 1
             local percent = capacity > 0 and energy / capacity or 0
 
             inputHistory[thisTab] = inputHistory[thisTab] or {}
@@ -177,11 +182,14 @@ local function main()
             if #inputHistory[thisTab] > maxChartPoints then table.remove(inputHistory[thisTab], 1) end
             if #outputHistory[thisTab] > maxChartPoints then table.remove(outputHistory[thisTab], 1) end
 
+            -- Before labels array:
             local function shortLabel(label, value, boxWidth)
                 local txt = label .. ": " .. value
                 if boxWidth < 10 then
+                    -- Only show value, omit label
                     txt = value
                 elseif #txt > boxWidth then
+                    -- Abbreviate label, e.g. "E:" instead of "Energy:"
                     local shortL = label:sub(1, 1) .. ":"
                     txt = shortL .. " " .. value
                     if #txt > boxWidth then
@@ -191,6 +199,7 @@ local function main()
                 return txt
             end
 
+            -- Labels with shortLabel:
             local totalConnections = stats.connectionCount or 0
             local points = stats.pointCount or 0
             local controller = stats.controllerCount or 0
@@ -208,6 +217,7 @@ local function main()
                 { "Output",            shortNumber(stats.energyOutput or 0) .. " FE/t",                theme.output or colors.red },
             }
 
+            -- Dynamic box arrangement
             for i, v in ipairs(labels) do
                 local col = (i - 1) % boxCols
                 local row = math.floor((i - 1) / boxCols)
@@ -218,16 +228,21 @@ local function main()
                 local isSpecial = (fg == (theme.input or colors.lime) or fg == (theme.output or colors.red))
                 local bg = isSpecial and colors.black or theme.tab_bg
 
+                -- Dynamically shorten text
                 local boxText = shortLabel(v[1], v[2], boxW)
+
                 ui.drawBox(win, x, y, boxW, boxH, bg, fg, boxText)
             end
 
+            -- Energy bar
             local barY = startY + math.ceil(#labels / boxCols) * (boxH + padY)
             ui.drawBarWithPercent(win, 2, barY, mW - 4, 1, percent)
 
+            -- Chart
             local chartY = barY + 2
             ui.drawBarChart(win, 2, chartY, mW - 4, chartHeight, inputHistory[thisTab], outputHistory[thisTab])
 
+            -- Buttons, shorten if needed
             win.setCursorPos(2, mH - 1)
             win.setBackgroundColor(theme.reset_bg)
             win.setTextColor(theme.text)
@@ -261,17 +276,20 @@ local function main()
         end
     end
 
+    drawContent()
+
     parallel.waitForAny(
-        updateStatsCache, -- Cache-Updater
+        updateStatsCache,
         function()
             while true do
-                sleep(0.2)
+                sleep(2)
                 drawContent()
             end
         end,
         function()
             while true do
                 local event, side, x, y = os.pullEvent("monitor_touch")
+                -- Find the monitor that was touched
                 local monitorIdx = 1
                 for i, mon in ipairs(monitors) do
                     if side == peripheral.getName(mon) then
